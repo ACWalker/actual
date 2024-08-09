@@ -8,7 +8,7 @@ import {
   getCategoriesWithTemplateNotes,
   resetCategoryGoalDefsWithNoTemplates,
 } from './statements';
-import { Template } from './types/templates';
+import { CategoryWithTemplates, Template } from './types/templates';
 
 export const TEMPLATE_PREFIX = '#template';
 export const GOAL_PREFIX = '#goal';
@@ -27,12 +27,6 @@ export async function storeTemplates(): Promise<void> {
 
   await resetCategoryGoalDefsWithNoTemplates();
 }
-
-type CategoryWithTemplates = {
-  id: string;
-  name: string;
-  templates: Template[];
-};
 
 export async function checkTemplates(): Promise<Notification> {
   const categoryWithTemplates = await getCategoriesWithTemplates();

@@ -1,5 +1,5 @@
 import * as db from '../db';
-import { Schedule } from '../db/types';
+import { Category, Schedule } from '../db/types';
 
 import { GOAL_PREFIX, TEMPLATE_PREFIX } from './template-notes';
 
@@ -43,5 +43,40 @@ export async function getCategoriesWithTemplateNotes(): Promise<
 export async function getActiveSchedules(): Promise<Schedule[]> {
   return await db.all(
     'SELECT id, rule, active, completed, posts_transaction, tombstone, name from schedules WHERE name NOT NULL AND tombstone = 0',
+  );
+}
+
+export async function getActiveCategories(): Promise<Category[]> {
+  return await db.all(
+    `
+      SELECT c.id,
+             c.name,
+             c.is_income,
+             c.cat_group,
+             c.sort_order,
+             c.tombstone,
+             c.hidden,
+             c.goal_def
+      FROM categories c
+             INNER JOIN category_groups cg on c.cat_group = cg.id
+      WHERE c.tombstone = 0
+        AND c.hidden = 0
+        AND c.hidden = 0
+    `,
+  );
+}
+
+export async function getCategoriesWithGoalDefs(): Promise<Category[]> {
+  return await db.all(
+    'SELECT c.id, c.name, c.is_income AS isIncome, c.cat_group AS catGroup, c.sort_order AS sortOrder, c.tombstone, c.hidden, c.goal_def as goalDef FROM categories c WHERE c.goal_def IS NOT NULL',
+  );
+}
+
+export async function getCategoryWithGoalDefs(
+  category_id: string,
+): Promise<Category> {
+  return await db.first(
+    'SELECT c.id, c.name, c.is_income AS isIncome, c.cat_group AS catGroup, c.sort_order AS sortOrder, c.tombstone, c.hidden, c.goal_def FROM categories c WHERE c.goal_def IS NOT NULL AND c.id = ?',
+    [category_id],
   );
 }

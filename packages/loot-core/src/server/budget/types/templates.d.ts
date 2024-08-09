@@ -80,3 +80,9 @@ export type Template =
   | AverageTemplate
   | GoalTemplate
   | ErrorTemplate;
+
+export type CategoryWithTemplates = {
+  id: string;
+  name: string;
+  templates: Template[];
+};
